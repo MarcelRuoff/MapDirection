@@ -132,13 +132,38 @@ public class MapDirection {
 		String origin = null;
 		String destination = null;
 		
-		for (Node[] node : input) {
+		List<Node[]> list = new ArrayList<Node[]>();
+		for (Node[] node1 : input) {
+			list.add(node1);
+		}
+		
+		for (Node[] node : list) {
 			
 			if (node[1].getLabel().toLowerCase().contains("destination")) {
-				destination = node[2].getLabel().replace(" ", "+");
+				String subject = node[2].getLabel();
+				String lat = null;
+				String lng = null;
+				for(Node[] node2 : list ) {
+					if(node2[0].getLabel().contains(subject)&&node2[1].getLabel().contains("lat")) {
+						lat = node2[2].getLabel();
+					}else if(node2[0].getLabel().contains(subject)&&node2[1].getLabel().contains("long")) {
+						lng = node2[2].getLabel();
+					}
+				}
+				destination = lat + ",+" + lng;
 			}
 			if (node[1].getLabel().toLowerCase().contains("origin")) {
-				destination = node[2].getLabel().replace(" ", "+");
+				String subject = node[2].getLabel();
+				String lat = null;
+				String lng = null;
+				for(Node[] node2 : list ) {
+					if(node2[0].getLabel().contains(subject)&&node2[1].getLabel().contains("lat")) {
+						lat = node2[2].getLabel();
+					}else if(node2[0].getLabel().contains(subject)&&node2[1].getLabel().contains("long")) {
+						lng = node2[2].getLabel();
+					}
+				}
+				origin = lat + ",+" + lng;
 			}
 			
 		}
@@ -204,7 +229,7 @@ public class MapDirection {
 		StmtIterator iterator = myModel.listStatements();
 		while (iterator.hasNext()) {
 			Statement smt = iterator.next();
-			graph.add(new Node[] { (Node) smt.getSubject(), (Node) smt.getPredicate(), (Node) smt.getObject() });
+			graph.add(new Node[] { new Literal(smt.getSubject().toString()), new Literal(smt.getPredicate().toString()), new Literal(smt.getObject().toString()) });
 		}
 		System.out.println(jsonStack.toString());
 
