@@ -38,10 +38,11 @@ import org.semanticweb.yars.nx.Node;
 import org.semanticweb.yars.nx.Resource;
 import org.semanticweb.yars.nx.namespace.RDF;
 import org.semanticweb.yars.nx.namespace.RDFS;
+import org.semanticweb.yars.nx.namespace.XSD;
 
 @Path("/mapDir")
 public class MapDirection {
-	UriInfo uri;
+	@Context UriInfo uri;
 
 	static HashMap<String, Iterable<Node[]>> calls = new HashMap<String, Iterable<Node[]>>();
 	static int counter = 0;
@@ -56,12 +57,35 @@ public class MapDirection {
 	 */
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
-	public String doGet(@Context UriInfo uriinfo) {
+	public String doGet() {
 
 		return "Hallo Welt";
 
 	}
+	
+	/**
+	 * 
+	 * returns basic descriptions on the wrapper root resource
+	 * 
+	 * @param collection
+	 * @param uriinfo
+	 * @return
+	 */
+	@GET
+	public Response doGetRdf() {
+		List<Node[]> graph = new ArrayList<Node[]>();
 
+		//		String rdf = "<> <http://example.org/is> \"geo gps coding webservice\" ; "
+		//				+ " a <http://example.org/webservice> . ";
+		Node base = new Resource( "http://localhost" );
+		graph.add( new Node[] {base, new Resource("http://example.org/predicate"), new Literal("the wrapper", XSD.STRING)} );
+
+
+		return Response.status(Response.Status.OK).entity(new GenericEntity<Iterable<Node[]>>( graph ) { }).build();
+	}
+
+	
+	
 	/**
 	 * creates a new call
 	 * 
